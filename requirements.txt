@@ -1,0 +1,7 @@
+streamlit
+pymongo
+requests
+elevenlabs
+python-dotenv
+azure
+azure-cognitiveservices-speech
