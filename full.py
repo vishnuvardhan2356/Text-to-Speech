@@ -29,9 +29,8 @@ SARVAM_API_KEY = 'c4944e8a-8d1a-4e5c-bbcb-d5069a7f34c6'
 AZURE_SPEECH_KEY = "6CVqzWbDeAHx3XIWQ1amYsNFAbPX8VZUQ4mJ66xcuztqhgGbydqsJQQJ99AKACGhslBXJ3w3AAAYACOGJLNq"
 AZURE_REGION = "centralindia"
 AZURE_CUSTOM_VOICE_DEPLOYMENT_ID = "ac6aadae-aef9-4e54-a198-9302daf23430"
-# RESEMBLE_API_KEY = 'api key'  # Commented out Resemble
 CARTESIA_API_KEY = 'sk_car_jq004Gx10Yk35O33qW5wV'
-
+DUBVERSE_API_KEY = 'your_dubverse_api_key_here'
 
 # Initialize ElevenLabs client
 eleven_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
@@ -63,6 +62,48 @@ class TimingMetrics:
             "time_to_first_byte": round(ttfb, 3),
             "total_response_time": round(total_time, 3)
         }
+
+def text_to_speech_dubverse(text):
+    metrics = TimingMetrics()
+    metrics.start()
+    
+    try:
+        url = "https://audio.dubverse.ai/api/tts"
+        headers = {
+            "X-API-KEY": 'KGX4DtlN7iUKkpbR8YNI7PKHBMVIzzUa',
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "text": text,
+            "speaker_no": 182,
+            "config": {
+                "use_streaming_response": False,
+                "sample_rate": 22050
+            }
+        }
+        
+        response = requests.post(url, json=payload, headers=headers, stream=True)
+        metrics.mark_first_byte()
+        
+        if response.status_code == 200:
+            save_file_path = f"dubverse_{uuid.uuid4()}.mp3"
+            audio_data = b''
+            
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    audio_data += chunk
+            
+            with open(save_file_path, "wb") as f:
+                f.write(audio_data)
+                
+            metrics.end()
+            return save_file_path, audio_data, metrics.get_metrics()
+        else:
+            raise Exception(f"API request failed with status code: {response.status_code}")
+            
+    except Exception as e:
+        raise Exception(f"Dubverse API error: {str(e)}")
 
 def text_to_speech_playai(text):
     metrics = TimingMetrics()
@@ -138,7 +179,6 @@ def text_to_speech_elevenlabs(text):
         
     metrics.end()
     return save_file_path, audio_data, metrics.get_metrics()
-
 
 def text_to_speech_sarvam(text):
     metrics = TimingMetrics()
@@ -279,7 +319,7 @@ def cleanup_old_files():
     try:
         current_dir = os.getcwd()
         for file in os.listdir(current_dir):
-            if any(file.startswith(prefix) for prefix in ['playai_', 'elevenlabs_', 'sarvam_', 'azure_', 'cartesia_']) and \
+            if any(file.startswith(prefix) for prefix in ['playai_', 'elevenlabs_', 'sarvam_', 'azure_', 'cartesia_', 'dubverse_']) and \
                file.endswith(('.mp3', '.wav')):
                 file_path = os.path.join(current_dir, file)
                 try:
@@ -310,7 +350,8 @@ if st.button("Generate Speech"):
                 "Sarvam": (text_to_speech_sarvam, "wav"),
                 "Cartesia": (text_to_speech_cartesia, "mp3"),
                 "Azure Standard": (lambda x: text_to_speech_azure(x, False), "wav"),
-                "Azure Custom": (lambda x: text_to_speech_azure(x, True), "wav")
+                "Azure Custom": (lambda x: text_to_speech_azure(x, True), "wav"),
+                "Dubverse": (text_to_speech_dubverse, "mp3")
             }
             
             progress_step = 100 / len(services)
