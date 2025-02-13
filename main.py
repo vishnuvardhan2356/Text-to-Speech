@@ -17,8 +17,8 @@ from dotenv import load_dotenv
 
 
 # MongoDB configuration
-# username = quote_plus(os.getenv('MONGODB_USERNAME'))
-# password = quote_plus(os.getenv('MONGODB_PASSWORD'))
+# username = quote_plus(st.secrets["MONGODB_USERNAME"])
+# password = quote_plus(st.secrets["MONGODB_PASSWORD"])
 # connection_string = f'mongodb+srv://{username}:{password}@tts.qf7rw.mongodb.net/tts_history_db'
 # client = MongoClient(connection_string)
 # db = client["tts_history_db"]
@@ -27,14 +27,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # API Keys
-PLAY_AI_API_KEY = os.getenv('PLAY_AI_API_KEY')
-ELEVENLABS_API_KEY = os.getenv('ELEVENLABS_API_KEY')
-SARVAM_API_KEY = os.getenv('SARVAM_API_KEY')
-AZURE_SPEECH_KEY = os.getenv('AZURE_SPEECH_KEY')
-AZURE_REGION = os.getenv('AZURE_REGION')
-AZURE_CUSTOM_VOICE_DEPLOYMENT_ID = os.getenv('AZURE_CUSTOM_VOICE_DEPLOYMENT_ID')
-CARTESIA_API_KEY = os.getenv('CARTESIA_API_KEY')
-DUBVERSE_API_KEY = os.getenv('DUBVERSE_API_KEY')
+PLAY_AI_API_KEY = st.secrets["PLAY_AI_API_KEY"]
+ELEVENLABS_API_KEY = st.secrets["ELEVENLABS_API_KEY"]
+SARVAM_API_KEY = st.secrets["SARVAM_API_KEY"]
+AZURE_SPEECH_KEY = st.secrets["AZURE_SPEECH_KEY"]
+AZURE_REGION = st.secrets["AZURE_REGION"]
+AZURE_CUSTOM_VOICE_DEPLOYMENT_ID = st.secrets["AZURE_CUSTOM_VOICE_DEPLOYMENT_ID"]
+CARTESIA_API_KEY = st.secrets["CARTESIA_API_KEY"]
+DUBVERSE_API_KEY = st.secrets["DUBVERSE_API_KEY"]
 
 # Initialize ElevenLabs client
 eleven_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
