@@ -13,24 +13,28 @@ import io
 import azure.cognitiveservices.speech as speechsdk
 import time
 import pandas as pd
+from dotenv import load_dotenv
+
 
 # MongoDB configuration
-# username = quote_plus("vishnub")
-# password = quote_plus("Vishnu1234")
+# username = quote_plus(os.getenv('MONGODB_USERNAME'))
+# password = quote_plus(os.getenv('MONGODB_PASSWORD'))
 # connection_string = f'mongodb+srv://{username}:{password}@tts.qf7rw.mongodb.net/tts_history_db'
 # client = MongoClient(connection_string)
 # db = client["tts_history_db"]
 # collection = db["history"]
 
+load_dotenv()
+
 # API Keys
-PLAY_AI_API_KEY = 'ak-8ed129b1621347858f25f3be20c05466'
-ELEVENLABS_API_KEY = 'sk_6b37b815e99f6442a1f2f5a11a2fb2484ad986afafb10472'
-SARVAM_API_KEY = 'c4944e8a-8d1a-4e5c-bbcb-d5069a7f34c6'
-AZURE_SPEECH_KEY = "6CVqzWbDeAHx3XIWQ1amYsNFAbPX8VZUQ4mJ66xcuztqhgGbydqsJQQJ99AKACGhslBXJ3w3AAAYACOGJLNq"
-AZURE_REGION = "centralindia"
-AZURE_CUSTOM_VOICE_DEPLOYMENT_ID = "ac6aadae-aef9-4e54-a198-9302daf23430"
-CARTESIA_API_KEY = 'sk_car_jq004Gx10Yk35O33qW5wV'
-DUBVERSE_API_KEY = 'your_dubverse_api_key_here'
+PLAY_AI_API_KEY = os.getenv('PLAY_AI_API_KEY')
+ELEVENLABS_API_KEY = os.getenv('ELEVENLABS_API_KEY')
+SARVAM_API_KEY = os.getenv('SARVAM_API_KEY')
+AZURE_SPEECH_KEY = os.getenv('AZURE_SPEECH_KEY')
+AZURE_REGION = os.getenv('AZURE_REGION')
+AZURE_CUSTOM_VOICE_DEPLOYMENT_ID = os.getenv('AZURE_CUSTOM_VOICE_DEPLOYMENT_ID')
+CARTESIA_API_KEY = os.getenv('CARTESIA_API_KEY')
+DUBVERSE_API_KEY = os.getenv('DUBVERSE_API_KEY')
 
 # Initialize ElevenLabs client
 eleven_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
@@ -70,7 +74,7 @@ def text_to_speech_dubverse_aahsa(text):
     try:
         url = "https://audio.dubverse.ai/api/tts"
         headers = {
-            "X-API-KEY": 'fOVusRjoJP28a5rEhHwGWVjh5TOBZ99s',
+            "X-API-KEY": DUBVERSE_API_KEY,
             "Content-Type": "application/json"
         }
         
@@ -112,7 +116,7 @@ def text_to_speech_dubverse_vijay(text):
     try:
         url = "https://audio.dubverse.ai/api/tts"
         headers = {
-            "X-API-KEY": 'fOVusRjoJP28a5rEhHwGWVjh5TOBZ99s',
+            "X-API-KEY": DUBVERSE_API_KEY,
             "Content-Type": "application/json"
         }
         
