@@ -80,7 +80,7 @@ def text_to_speech_dubverse_aahsa(text):
         
         payload = {
             "text": text,
-            "speaker_no": 155,
+            "speaker_no": 182,
             "config": {
                 "use_streaming_response": False,
                 "sample_rate": 22050
