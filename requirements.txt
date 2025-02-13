@@ -3,5 +3,5 @@ pymongo
 requests
 elevenlabs
 python-dotenv
-azure
 azure-cognitiveservices-speech
+pandas
