@@ -15,12 +15,12 @@ import time
 import pandas as pd
 
 # MongoDB configuration
-username = quote_plus("vishnub")
-password = quote_plus("Vishnu1234")
-connection_string = f'mongodb+srv://{username}:{password}@tts.qf7rw.mongodb.net/tts_history_db'
-client = MongoClient(connection_string)
-db = client["tts_history_db"]
-collection = db["history"]
+# username = quote_plus("vishnub")
+# password = quote_plus("Vishnu1234")
+# connection_string = f'mongodb+srv://{username}:{password}@tts.qf7rw.mongodb.net/tts_history_db'
+# client = MongoClient(connection_string)
+# db = client["tts_history_db"]
+# collection = db["history"]
 
 # API Keys
 PLAY_AI_API_KEY = 'ak-8ed129b1621347858f25f3be20c05466'
@@ -63,20 +63,62 @@ class TimingMetrics:
             "total_response_time": round(total_time, 3)
         }
 
-def text_to_speech_dubverse(text):
+def text_to_speech_dubverse_aahsa(text):
     metrics = TimingMetrics()
     metrics.start()
     
     try:
         url = "https://audio.dubverse.ai/api/tts"
         headers = {
-            "X-API-KEY": 'KGX4DtlN7iUKkpbR8YNI7PKHBMVIzzUa',
+            "X-API-KEY": 'fOVusRjoJP28a5rEhHwGWVjh5TOBZ99s',
             "Content-Type": "application/json"
         }
         
         payload = {
             "text": text,
-            "speaker_no": 182,
+            "speaker_no": 155,
+            "config": {
+                "use_streaming_response": False,
+                "sample_rate": 22050
+            }
+        }
+        
+        response = requests.post(url, json=payload, headers=headers, stream=True)
+        metrics.mark_first_byte()
+        
+        if response.status_code == 200:
+            save_file_path = f"dubverse_{uuid.uuid4()}.mp3"
+            audio_data = b''
+            
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    audio_data += chunk
+            
+            with open(save_file_path, "wb") as f:
+                f.write(audio_data)
+                
+            metrics.end()
+            return save_file_path, audio_data, metrics.get_metrics()
+        else:
+            raise Exception(f"API request failed with status code: {response.status_code}")
+            
+    except Exception as e:
+        raise Exception(f"Dubverse API error: {str(e)}")
+
+def text_to_speech_dubverse_vijay(text):
+    metrics = TimingMetrics()
+    metrics.start()
+    
+    try:
+        url = "https://audio.dubverse.ai/api/tts"
+        headers = {
+            "X-API-KEY": 'fOVusRjoJP28a5rEhHwGWVjh5TOBZ99s',
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "text": text,
+            "speaker_no": 149,
             "config": {
                 "use_streaming_response": False,
                 "sample_rate": 22050
@@ -350,8 +392,9 @@ if st.button("Generate Speech"):
                 "Sarvam": (text_to_speech_sarvam, "wav"),
                 "Cartesia": (text_to_speech_cartesia, "mp3"),
                 "Azure Standard": (lambda x: text_to_speech_azure(x, False), "wav"),
-                "Azure Custom": (lambda x: text_to_speech_azure(x, True), "wav"),
-                "Dubverse": (text_to_speech_dubverse, "mp3")
+                # "Azure Custom": (lambda x: text_to_speech_azure(x, True), "wav"),
+                "Dubverse_Aasha": (text_to_speech_dubverse_aahsa, "mp3"),
+                "Dubverse_Vijay": (text_to_speech_dubverse_vijay, "mp3")
             }
             
             progress_step = 100 / len(services)
