@@ -36,6 +36,15 @@ AZURE_CUSTOM_VOICE_DEPLOYMENT_ID = st.secrets["AZURE_CUSTOM_VOICE_DEPLOYMENT_ID"
 CARTESIA_API_KEY = st.secrets["CARTESIA_API_KEY"]
 DUBVERSE_API_KEY = st.secrets["DUBVERSE_API_KEY"]
 
+# PLAY_AI_API_KEY =  os.getenv("PLAY_AI_API_KEY")
+# ELEVENLABS_API_KEY =  os.getenv("ELEVENLABS_API_KEY")
+# SARVAM_API_KEY =  os.getenv("SARVAM_API_KEY")
+# AZURE_SPEECH_KEY =  os.getenv("AZURE_SPEECH_KEY")
+# AZURE_REGION =  os.getenv("AZURE_REGION")
+# AZURE_CUSTOM_VOICE_DEPLOYMENT_ID =  os.getenv("AZURE_CUSTOM_VOICE_DEPLOYMENT_ID")
+# CARTESIA_API_KEY =  os.getenv("CARTESIA_API_KEY")
+# DUBVERSE_API_KEY =  os.getenv("DUBVERSE_API_KEY")
+
 # Initialize ElevenLabs client
 eleven_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 
@@ -67,7 +76,7 @@ class TimingMetrics:
             "total_response_time": round(total_time, 3)
         }
 
-def text_to_speech_dubverse_aahsa(text):
+def text_to_speech_dubverse_Sunidhi_Hindi(text):
     metrics = TimingMetrics()
     metrics.start()
     
@@ -80,7 +89,7 @@ def text_to_speech_dubverse_aahsa(text):
         
         payload = {
             "text": text,
-            "speaker_no": 184,
+            "speaker_no": 182,
             "config": {
                 "use_streaming_response": False,
                 "sample_rate": 22050
@@ -109,7 +118,7 @@ def text_to_speech_dubverse_aahsa(text):
     except Exception as e:
         raise Exception(f"Dubverse API error: {str(e)}")
 
-def text_to_speech_dubverse_vijay(text):
+def text_to_speech_dubverse_Shaan_Hindi(text):
     metrics = TimingMetrics()
     metrics.start()
     
@@ -122,7 +131,93 @@ def text_to_speech_dubverse_vijay(text):
         
         payload = {
             "text": text,
-            "speaker_no": 149,
+            "speaker_no": 181,
+            "config": {
+                "use_streaming_response": False,
+                "sample_rate": 22050
+            }
+        }
+        
+        response = requests.post(url, json=payload, headers=headers, stream=True)
+        metrics.mark_first_byte()
+        
+        if response.status_code == 200:
+            save_file_path = f"dubverse_{uuid.uuid4()}.mp3"
+            audio_data = b''
+            
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    audio_data += chunk
+            
+            with open(save_file_path, "wb") as f:
+                f.write(audio_data)
+                
+            metrics.end()
+            return save_file_path, audio_data, metrics.get_metrics()
+        else:
+            raise Exception(f"API request failed with status code: {response.status_code}")
+            
+    except Exception as e:
+        raise Exception(f"Dubverse API error: {str(e)}")
+
+
+def text_to_speech_dubverse_Shaan_English(text):
+    metrics = TimingMetrics()
+    metrics.start()
+    
+    try:
+        url = "https://audio.dubverse.ai/api/tts"
+        headers = {
+            "X-API-KEY": DUBVERSE_API_KEY,
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "text": text,
+            "speaker_no": 185,
+            "config": {
+                "use_streaming_response": False,
+                "sample_rate": 22050
+            }
+        }
+        
+        response = requests.post(url, json=payload, headers=headers, stream=True)
+        metrics.mark_first_byte()
+        
+        if response.status_code == 200:
+            save_file_path = f"dubverse_{uuid.uuid4()}.mp3"
+            audio_data = b''
+            
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    audio_data += chunk
+            
+            with open(save_file_path, "wb") as f:
+                f.write(audio_data)
+                
+            metrics.end()
+            return save_file_path, audio_data, metrics.get_metrics()
+        else:
+            raise Exception(f"API request failed with status code: {response.status_code}")
+            
+    except Exception as e:
+        raise Exception(f"Dubverse API error: {str(e)}")
+
+
+def text_to_speech_dubverse_Sunidhi_English(text):
+    metrics = TimingMetrics()
+    metrics.start()
+    
+    try:
+        url = "https://audio.dubverse.ai/api/tts"
+        headers = {
+            "X-API-KEY": DUBVERSE_API_KEY,
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "text": text,
+            "speaker_no": 184,
             "config": {
                 "use_streaming_response": False,
                 "sample_rate": 22050
@@ -397,8 +492,10 @@ if st.button("Generate Speech"):
                 "Cartesia": (text_to_speech_cartesia, "mp3"),
                 "Azure Standard": (lambda x: text_to_speech_azure(x, False), "wav"),
                 # "Azure Custom": (lambda x: text_to_speech_azure(x, True), "wav"),
-                "Dubverse_Aasha": (text_to_speech_dubverse_aahsa, "mp3"),
-                "Dubverse_Vijay": (text_to_speech_dubverse_vijay, "mp3")
+                "Dubverse_Shaan_English": (text_to_speech_dubverse_Shaan_English, "mp3"),
+                "Dubverse_Sunidhi_English": (text_to_speech_dubverse_Sunidhi_English, "mp3"),
+                "Dubverse_Shaan_Hindi": (text_to_speech_dubverse_Shaan_Hindi, "mp3"),
+                "Dubverse_Sunidhi_Hindi": (text_to_speech_dubverse_Sunidhi_Hindi, "mp3")
             }
             
             progress_step = 100 / len(services)
