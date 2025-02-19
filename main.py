@@ -76,6 +76,83 @@ class TimingMetrics:
             "total_response_time": round(total_time, 3)
         }
 
+
+def text_to_speech_dubverse_Sunidhi_Candy2_Hindi(text):
+    metrics = TimingMetrics()
+    metrics.start()
+    
+    try:
+        url = "https://audio.dubverse.ai/api/tts"
+        headers = {
+            "X-API-KEY": DUBVERSE_API_KEY,
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "text": text,
+            "speaker_no": 1191,
+            "config": {
+                "use_streaming_response": False,
+                # "sample_rate": 22050
+            }
+        }
+        
+        response = requests.request("POST",url, json=payload, headers=headers)
+        metrics.mark_first_byte()
+
+        if response.status_code == 200:
+            save_file_path = f"dubverse_{uuid.uuid4()}.mp3"
+            with open(save_file_path, "wb") as f:
+                f.write(response.content)  # Directly save the response content
+            
+            metrics.end()
+            return save_file_path, response.content, metrics.get_metrics()
+          # Dummy timing for now
+        else:
+            print("Response:", response.text)  # Print response for debugging
+            raise Exception(f"API request failed with status {response.status_code}: {response.text}")
+
+    except Exception as e:
+        raise Exception(f"Dubverse API error: {str(e)}")
+
+def text_to_speech_dubverse_Shaan_Candy2_Hindi(text):
+    metrics = TimingMetrics()
+    metrics.start()
+    
+    try:
+        url = "https://audio.dubverse.ai/api/tts"
+        headers = {
+            "X-API-KEY": DUBVERSE_API_KEY,
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "text": text,
+            "speaker_no": 1190,
+            "config": {
+                "use_streaming_response": False,
+                # "sample_rate": 22050
+            }
+        }
+        
+        response = requests.request("POST",url, json=payload, headers=headers, stream=True)
+        metrics.mark_first_byte()
+        
+        if response.status_code == 200:
+            save_file_path = f"dubverse_{uuid.uuid4()}.mp3"
+            with open(save_file_path, "wb") as f:
+                f.write(response.content) 
+            
+            metrics.end() # Directly save the response content
+            return save_file_path, response.content, metrics.get_metrics()  # Dummy timing for now
+        else:
+            print("Response:", response.text)  # Print response for debugging
+            raise Exception(f"API request failed with status {response.status_code}: {response.text}")
+
+    except Exception as e:
+        raise Exception(f"Dubverse API error: {str(e)}")
+
+
 def text_to_speech_dubverse_Sunidhi_Hindi(text):
     metrics = TimingMetrics()
     metrics.start()
@@ -495,7 +572,10 @@ if st.button("Generate Speech"):
                 "Dubverse_Shaan_English": (text_to_speech_dubverse_Shaan_English, "mp3"),
                 "Dubverse_Sunidhi_English": (text_to_speech_dubverse_Sunidhi_English, "mp3"),
                 "Dubverse_Shaan_Hindi": (text_to_speech_dubverse_Shaan_Hindi, "mp3"),
-                "Dubverse_Sunidhi_Hindi": (text_to_speech_dubverse_Sunidhi_Hindi, "mp3")
+                "Dubverse_Sunidhi_Hindi": (text_to_speech_dubverse_Sunidhi_Hindi, "mp3"),
+                "Dubverse_Sunidhi_Candy2_Hindi": (text_to_speech_dubverse_Sunidhi_Candy2_Hindi, "wav"),
+                "Dubverse_Shaan_Candy2_Hindi": (text_to_speech_dubverse_Shaan_Candy2_Hindi, "wav")
+
             }
             
             progress_step = 100 / len(services)
