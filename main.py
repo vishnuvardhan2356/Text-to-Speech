@@ -486,7 +486,8 @@ def text_to_speech_playai(text):
         "accept": "audio/wav",  # Ensure WAV format in response
         "content-type": "application/json",
         "AUTHORIZATION": play_key,
-        "X-USER-ID": play_user_id
+        "X-USER-ID": play_user_id,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
     }
 
     response = requests.post(url, json=payload, headers=headers, stream=True)
