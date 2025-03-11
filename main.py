@@ -35,6 +35,8 @@ AZURE_REGION = st.secrets["AZURE_REGION"]
 AZURE_CUSTOM_VOICE_DEPLOYMENT_ID = st.secrets["AZURE_CUSTOM_VOICE_DEPLOYMENT_ID"]
 CARTESIA_API_KEY = st.secrets["CARTESIA_API_KEY"]
 DUBVERSE_API_KEY = st.secrets["DUBVERSE_API_KEY"]
+play_key = st.secrets["play_key"]
+play_user_id = st.secrets["play_user_id"]
 
 # PLAY_AI_API_KEY =  os.getenv("PLAY_AI_API_KEY")
 # ELEVENLABS_API_KEY =  os.getenv("ELEVENLABS_API_KEY")
@@ -44,6 +46,9 @@ DUBVERSE_API_KEY = st.secrets["DUBVERSE_API_KEY"]
 # AZURE_CUSTOM_VOICE_DEPLOYMENT_ID =  os.getenv("AZURE_CUSTOM_VOICE_DEPLOYMENT_ID")
 # CARTESIA_API_KEY =  os.getenv("CARTESIA_API_KEY")
 # DUBVERSE_API_KEY =  os.getenv("DUBVERSE_API_KEY")
+# play_key = os.getenv("play_key")
+# play_user_id = os.getenv("play_user_id")
+
 
 # Initialize ElevenLabs client
 eleven_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
@@ -75,6 +80,85 @@ class TimingMetrics:
             "time_to_first_byte": round(ttfb, 3),
             "total_response_time": round(total_time, 3)
         }
+
+
+def text_to_speech_dubverse_Rashmika_Candy2_English(text):
+    metrics = TimingMetrics()
+    metrics.start()
+    
+    try:
+        url = "https://audio.dubverse.ai/api/tts"
+        headers = {
+            "X-API-KEY": DUBVERSE_API_KEY,
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "text": text,
+            "speaker_no": 1194,
+            "config": {
+                "use_streaming_response": False,
+                # "sample_rate": 22050
+            }
+        }
+        
+        response = requests.request("POST",url, json=payload, headers=headers)
+        metrics.mark_first_byte()
+
+        if response.status_code == 200:
+            save_file_path = f"dubverse_{uuid.uuid4()}.mp3"
+            with open(save_file_path, "wb") as f:
+                f.write(response.content)  # Directly save the response content
+            
+            metrics.end()
+            return save_file_path, response.content, metrics.get_metrics()
+          # Dummy timing for now
+        else:
+            print("Response:", response.text)  # Print response for debugging
+            raise Exception(f"API request failed with status {response.status_code}: {response.text}")
+
+    except Exception as e:
+        raise Exception(f"Dubverse API error: {str(e)}")
+
+
+def text_to_speech_dubverse_Rakesh_Candy2_English(text):
+    metrics = TimingMetrics()
+    metrics.start()
+    
+    try:
+        url = "https://audio.dubverse.ai/api/tts"
+        headers = {
+            "X-API-KEY": DUBVERSE_API_KEY,
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "text": text,
+            "speaker_no": 1195,
+            "config": {
+                "use_streaming_response": False,
+                # "sample_rate": 22050
+            }
+        }
+        
+        response = requests.request("POST",url, json=payload, headers=headers)
+        metrics.mark_first_byte()
+
+        if response.status_code == 200:
+            save_file_path = f"dubverse_{uuid.uuid4()}.mp3"
+            with open(save_file_path, "wb") as f:
+                f.write(response.content)  # Directly save the response content
+            
+            metrics.end()
+            return save_file_path, response.content, metrics.get_metrics()
+          # Dummy timing for now
+        else:
+            print("Response:", response.text)  # Print response for debugging
+            raise Exception(f"API request failed with status {response.status_code}: {response.text}")
+
+    except Exception as e:
+        raise Exception(f"Dubverse API error: {str(e)}")
+
 
 
 def text_to_speech_dubverse_Sunidhi_Candy2_Hindi(text):
@@ -323,53 +407,117 @@ def text_to_speech_dubverse_Sunidhi_English(text):
     except Exception as e:
         raise Exception(f"Dubverse API error: {str(e)}")
 
+# def text_to_speech_playai(text):
+#     metrics = TimingMetrics()
+#     metrics.start()
+    
+#     url = "https://api.play.ai/api/v1/tts/stream"
+#     headers = {
+#         "AUTHORIZATION": PLAY_AI_API_KEY,
+#         "X-USER-ID": 'gETymo585oUyMMNisi9I2DQX7Q83',
+#         "Content-Type": "application/json"
+#     }
+    
+#     payload = {
+#         "model": "PlayDialog",
+#         "text": text,
+#         "voice": "s3://voice-cloning-zero-shot/bc3aac42-8e8f-43e2-8919-540f817a0ac4/original/manifest.json",
+#         "outputFormat": "mp3",
+#         "speed": 1.0,
+#         "sampleRate": 48000,
+#         "seed": None,
+#         "temperature": 0.7,
+#         "language": "english"
+#     }
+    
+    # response = requests.post(url, json=payload, headers=headers, stream=True)
+    
+    # if response.status_code == 200:
+    #     metrics.mark_first_byte()
+    #     save_file_path = f"playai_{uuid.uuid4()}.mp3"
+    #     audio_data = b''
+    #     for chunk in response.iter_content(chunk_size=8192):
+    #         if chunk:
+    #             audio_data += chunk
+        
+    #     with open(save_file_path, "wb") as f:
+    #         f.write(audio_data)
+            
+    #     metrics.end()
+    #     return save_file_path, audio_data, metrics.get_metrics()
+    # else:
+    #     raise Exception(f"Play.ai API error: {response.status_code} - {response.text}")
+    
+
+import requests
+import uuid
+
 def text_to_speech_playai(text):
     metrics = TimingMetrics()
     metrics.start()
-    
-    url = "https://api.play.ai/api/v1/tts/stream"
-    headers = {
-        "AUTHORIZATION": PLAY_AI_API_KEY,
-        "X-USER-ID": 'gETymo585oUyMMNisi9I2DQX7Q83',
-        "Content-Type": "application/json"
-    }
-    
+
+    url = "https://api.play.ht/api/v2/tts/stream"
+
     payload = {
-        "model": "PlayDialog",
         "text": text,
         "voice": "s3://voice-cloning-zero-shot/bc3aac42-8e8f-43e2-8919-540f817a0ac4/original/manifest.json",
-        "outputFormat": "mp3",
-        "speed": 1.0,
-        "sampleRate": 48000,
+        "quality": "draft",
+        "output_format": "wav",  # Changed to WAV format
+        "speed": 1,
+        "sample_rate": 24000,
         "seed": None,
-        "temperature": 0.7,
-        "language": "english"
+        "temperature": None,
+        "voice_engine": "PlayDialog",
+        "emotion": "female_happy",
+        "voice_guidance": 3,
+        "style_guidance": 20,
+        "text_guidance": 1,
+        "language": "english",
+        "voice_2": "s3://voice-cloning-zero-shot/d9ff78ba-d016-47f6-b0ef-dd630f59414e/female-cs/manifest.json",
+        "turn_prefix": "Country Mouse:",
+        "turn_prefix_2": "Town Mouse:",
+        "prompt": "string",
+        "prompt_2": "string",
+        "voice_conditioning_seconds": 20,
+        "voice_conditioning_seconds_2": 20
     }
-    
+
+    headers = {
+        "accept": "audio/wav",  # Ensure WAV format in response
+        "content-type": "application/json",
+        "AUTHORIZATION": play_key,
+        "X-USER-ID": play_user_id
+    }
+
     response = requests.post(url, json=payload, headers=headers, stream=True)
-    
+
     if response.status_code == 200:
         metrics.mark_first_byte()
-        save_file_path = f"playai_{uuid.uuid4()}.mp3"
+        save_file_path = f"playai_{uuid.uuid4()}.wav"  # Changed to .wav extension
         audio_data = b''
+        
         for chunk in response.iter_content(chunk_size=8192):
             if chunk:
                 audio_data += chunk
-        
+
         with open(save_file_path, "wb") as f:
             f.write(audio_data)
-            
+
         metrics.end()
         return save_file_path, audio_data, metrics.get_metrics()
     else:
         raise Exception(f"Play.ai API error: {response.status_code} - {response.text}")
+
+
+
+
 
 def text_to_speech_elevenlabs(text):
     metrics = TimingMetrics()
     metrics.start()
     
     response = eleven_client.text_to_speech.convert(
-        voice_id="fB7yp9cWTRBT9Taud6m9",
+        voice_id="MF4J4IDTRo0AxOO4dpFR",
         output_format="mp3_22050_32",
         text=text,
         model_id="eleven_multilingual_v2",
@@ -563,18 +711,20 @@ if st.button("Generate Speech"):
         try:
             # Generate all audio
             services = {
-                "Play.ai": (text_to_speech_playai, "mp3"),
-                "Eleven Labs": (text_to_speech_elevenlabs, "mp3"),
+                "Play.ai": (text_to_speech_playai, "wav"),
+                "Eleven Labs": (text_to_speech_elevenlabs, "wav"),
                 "Sarvam": (text_to_speech_sarvam, "wav"),
-                "Cartesia": (text_to_speech_cartesia, "mp3"),
+                "Cartesia": (text_to_speech_cartesia, "wav"),
                 "Azure Standard": (lambda x: text_to_speech_azure(x, False), "wav"),
-                # "Azure Custom": (lambda x: text_to_speech_azure(x, True), "wav"),
-                "Dubverse_Shaan_English": (text_to_speech_dubverse_Shaan_English, "mp3"),
-                "Dubverse_Sunidhi_English": (text_to_speech_dubverse_Sunidhi_English, "mp3"),
-                "Dubverse_Shaan_Hindi": (text_to_speech_dubverse_Shaan_Hindi, "mp3"),
-                "Dubverse_Sunidhi_Hindi": (text_to_speech_dubverse_Sunidhi_Hindi, "mp3"),
+                "Azure Custom": (lambda x: text_to_speech_azure(x, True), "wav"),
+                "Dubverse_Shaan_English": (text_to_speech_dubverse_Shaan_English, "wav"),
+                "Dubverse_Sunidhi_English": (text_to_speech_dubverse_Sunidhi_English, "wav"),
+                "Dubverse_Shaan_Hindi": (text_to_speech_dubverse_Shaan_Hindi, "wav"),
+                "Dubverse_Sunidhi_Hindi": (text_to_speech_dubverse_Sunidhi_Hindi, "wav"),
                 "Dubverse_Sunidhi_Candy2_Hindi": (text_to_speech_dubverse_Sunidhi_Candy2_Hindi, "wav"),
-                "Dubverse_Shaan_Candy2_Hindi": (text_to_speech_dubverse_Shaan_Candy2_Hindi, "wav")
+                "Dubverse_Shaan_Candy2_Hindi": (text_to_speech_dubverse_Shaan_Candy2_Hindi, "wav"),
+                "Dubverse_Rashmika_Candy2_English": (text_to_speech_dubverse_Rashmika_Candy2_English, "wav"),
+                "Dubverse_Rakesh_Candy2_English": (text_to_speech_dubverse_Rakesh_Candy2_English, "wav")
 
             }
             
