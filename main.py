@@ -714,18 +714,18 @@ if st.button("Generate Speech"):
             services = {
                 # "Play.ai": (text_to_speech_playai, "wav"),
                 "Eleven Labs": (text_to_speech_elevenlabs, "wav"),
-                "Sarvam": (text_to_speech_sarvam, "wav"),
+                # "Sarvam": (text_to_speech_sarvam, "wav"),
                 "Cartesia": (text_to_speech_cartesia, "wav"),
-                "Azure Standard": (lambda x: text_to_speech_azure(x, False), "wav"),
-                "Azure Custom": (lambda x: text_to_speech_azure(x, True), "wav"),
-                "Dubverse_Shaan_English": (text_to_speech_dubverse_Shaan_English, "wav"),
-                "Dubverse_Sunidhi_English": (text_to_speech_dubverse_Sunidhi_English, "wav"),
-                "Dubverse_Shaan_Hindi": (text_to_speech_dubverse_Shaan_Hindi, "wav"),
-                "Dubverse_Sunidhi_Hindi": (text_to_speech_dubverse_Sunidhi_Hindi, "wav"),
-                "Dubverse_Sunidhi_Candy2_Hindi": (text_to_speech_dubverse_Sunidhi_Candy2_Hindi, "wav"),
-                "Dubverse_Shaan_Candy2_Hindi": (text_to_speech_dubverse_Shaan_Candy2_Hindi, "wav"),
-                "Dubverse_Rashmika_Candy2_English": (text_to_speech_dubverse_Rashmika_Candy2_English, "wav"),
-                "Dubverse_Rakesh_Candy2_English": (text_to_speech_dubverse_Rakesh_Candy2_English, "wav")
+                # "Azure Standard": (lambda x: text_to_speech_azure(x, False), "wav"),
+                # "Azure Custom": (lambda x: text_to_speech_azure(x, True), "wav"),
+                # "Dubverse_Shaan_English": (text_to_speech_dubverse_Shaan_English, "wav"),
+                # "Dubverse_Sunidhi_English": (text_to_speech_dubverse_Sunidhi_English, "wav"),
+                # "Dubverse_Shaan_Hindi": (text_to_speech_dubverse_Shaan_Hindi, "wav"),
+                # "Dubverse_Sunidhi_Hindi": (text_to_speech_dubverse_Sunidhi_Hindi, "wav"),
+                # "Dubverse_Sunidhi_Candy2_Hindi": (text_to_speech_dubverse_Sunidhi_Candy2_Hindi, "wav"),
+                # "Dubverse_Shaan_Candy2_Hindi": (text_to_speech_dubverse_Shaan_Candy2_Hindi, "wav"),
+                # "Dubverse_Rashmika_Candy2_English": (text_to_speech_dubverse_Rashmika_Candy2_English, "wav"),
+                # "Dubverse_Rakesh_Candy2_English": (text_to_speech_dubverse_Rakesh_Candy2_English, "wav")
 
             }
             
