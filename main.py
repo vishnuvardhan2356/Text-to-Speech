@@ -712,7 +712,7 @@ if st.button("Generate Speech"):
         try:
             # Generate all audio
             services = {
-                "Play.ai": (text_to_speech_playai, "wav"),
+                # "Play.ai": (text_to_speech_playai, "wav"),
                 "Eleven Labs": (text_to_speech_elevenlabs, "wav"),
                 "Sarvam": (text_to_speech_sarvam, "wav"),
                 "Cartesia": (text_to_speech_cartesia, "wav"),
